@@ -1,0 +1,24 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ prof_user.username }}'s Profile</h5>
+            <h6 class="card-subtitle mb-2">
+                Followers: {{ prof_user.followers.all|length }}
+            </h6>
+            <h6 class="card-subtitle mb-2">
+                Following: {{ prof_user.following.all|length }}
+            </h6>
+            {% if request.user in prof_user.followers.all and request.user != prof_user %}
+                <a href="{% url 'unfollow' user_id=prof_user.id %}" class="btn btn-secondary" id="unfollow-button">Unfollow</a>
+            {% elif request.user not in prof_user.followers.all and request.user != prof_user %}
+                <a href="{% url 'follow' user_id=prof_user.id %}" class="btn btn-primary" id="follow-button">Follow</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% include "network/posts_list.html" %}
+
+
+{% endblock %}

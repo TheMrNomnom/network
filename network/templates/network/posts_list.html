@@ -1,0 +1,68 @@
+{% for post in posts %}
+    <div class="card" id="post-{{ post.id }}">
+        <div class="card-body">
+            <h5 class="card-title">
+                <a href="{% url 'profile_page' user_name=post.creator.username %}">{{ post.creator }}</a>
+            </h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+                {{ post.timestamp }}
+            </h6>
+            <p class="card-text" id="post-text-{{ post.id }}">
+                {{ post.text }}
+            </p>
+            <p class="card-text">
+                <a href="#" class="like-button" data-post-id="{{ post.id }}" id="like-{{ post.id }}" data-liked="{% if request.user in post.likes.all %}true{% else %}false{% endif %}">
+                    {% if request.user not in post.likes.all %}
+                        &#9825;
+                    {% else %}
+                        &#10084;
+                    {% endif %}
+                </a> <span id="like-count-{{ post.id }}">{{ post.likes.all|length }}</span>
+            </p>
+            {% if post.creator == user %}
+                <a href="#" class="card-link edit-link" data-post-id="{{ post.id }}">
+                    Edit Post
+                </a>
+                {% csrf_token %}
+                <textarea id="edit-text-{{ post.id }}" style="display:none;"></textarea>
+                <button class="btn btn-primary" id="save-edit-{{ post.id }}" style="display:none;">Save</button>
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endfor %}
+
+<ul class="pagination justify-content-center">
+    {% if posts.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+    {% endif %}
+    {% for i in posts.paginator.page_range %}
+        {% if posts.number == i %}
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ i }}
+                </span>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+    {% if posts.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Next</a>
+        </li>
+    {% endif %}
+</ul>
